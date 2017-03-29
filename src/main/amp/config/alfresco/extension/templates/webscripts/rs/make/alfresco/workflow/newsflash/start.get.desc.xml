@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Start news flash workflow</shortname>
+	<description>Start news flash workflow</description>
+	<url>/rs/make/news-flash/start</url>
+	<url>/rs/make/news-flash/start.json</url>
+	<format default='json'>extension</format>
+	<authentication runas='admin'>user</authentication>
+	<transaction>required</transaction>
+</webscript>

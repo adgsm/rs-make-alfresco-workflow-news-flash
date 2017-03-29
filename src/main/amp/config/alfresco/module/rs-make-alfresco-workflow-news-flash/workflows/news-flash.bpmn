@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.make.rs/model/workflow/news-flash/1.0">
+  <process id="newsFlash" name="News Flash" isExecutable="true">
+    <extensionElements>
+      <activiti:executionListener event="start" delegateExpression="${NewsFlash}"></activiti:executionListener>
+    </extensionElements>
+    <startEvent id="startevent-news-flash" name="Start" activiti:formKey="makenfwf:newsFlash"></startEvent>
+    <endEvent id="endevent-news-flash" name="End"></endEvent>
+    <sequenceFlow id="flow-start-timer" sourceRef="startevent-news-flash" targetRef="timerintermediatecatchevent-subprocess-news-flash-start"></sequenceFlow>
+    <sequenceFlow id="flow-timer-end" sourceRef="timerintermediatecatchevent-subprocess-news-flash-end" targetRef="endevent-news-flash"></sequenceFlow>
+    <intermediateCatchEvent id="timerintermediatecatchevent-subprocess-news-flash-end" name="TimerCatchEvent">
+      <timerEventDefinition>
+        <timeDuration>${newsFlashTimerEnd}</timeDuration>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+    <intermediateCatchEvent id="timerintermediatecatchevent-subprocess-news-flash-start" name="TimerCatchEvent">
+      <timerEventDefinition>
+        <timeDuration>${newsFlashTimerStart}</timeDuration>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="flow-timer-subprocess-news-flash" sourceRef="timerintermediatecatchevent-subprocess-news-flash-start" targetRef="subprocess-news-flash"></sequenceFlow>
+    <subProcess id="subprocess-news-flash" name="News Flash" activiti:async="true">
+      <extensionElements>
+        <activiti:mapException errorCode="newsFlashError"></activiti:mapException>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="${NewsFlash.subProcessInstances()}" activiti:elementVariable="newsFlash"></multiInstanceLoopCharacteristics>
+      <startEvent id="startevent-subprocess-news-flash" name="Start"></startEvent>
+      <serviceTask id="servicetask-set-user-task-vars-news-flash" name="Set parameters" activiti:delegateExpression="${SetParametersForNewsFlash}"></serviceTask>
+      <sequenceFlow id="flow-subprocess-news-flash-set-parameters" sourceRef="startevent-subprocess-news-flash" targetRef="servicetask-set-user-task-vars-news-flash"></sequenceFlow>
+      <endEvent id="endevent-subprocess-news-flash" name="End"></endEvent>
+      <sequenceFlow id="flow-subprocess-news-flash-end" sourceRef="callactivity-news-flash" targetRef="endevent-subprocess-news-flash"></sequenceFlow>
+      <callActivity id="callactivity-news-flash" name="News Flash" calledElement="commonEmailScriptTask" activiti:inheritVariables="false">
+        <extensionElements>
+          <activiti:in source="bpm_workflowDescription" target="bpm_workflowDescription"></activiti:in>
+          <activiti:in source="bpm_workflowDueDate" target="bpm_workflowDueDate"></activiti:in>
+          <activiti:in source="bpm_workflowPriority" target="bpm_workflowPriority"></activiti:in>
+          <activiti:in source="makenfwf_locale" target="makenfwf_locale"></activiti:in>
+          <activiti:in source="newsFlash" target="newsFlash"></activiti:in>
+          <activiti:in source="bpm_package" target="bpm_package"></activiti:in>
+          <activiti:in source="initiatorUserName" target="initiatorUserName"></activiti:in>
+          <activiti:in source="candidate" target="candidate"></activiti:in>
+          <activiti:in source="candidateForm" target="candidateForm"></activiti:in>
+          <activiti:in source="taskStart" target="taskStart"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskInitializationVar" target="commonEmailScriptTaskInitializationVar"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskStartVar" target="commonEmailScriptTaskStartVar"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskCheckPrerequisitesVar" target="commonEmailScriptTaskCheckPrerequisitesVar"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskEndVar" target="commonEmailScriptTaskEndVar"></activiti:in>
+        </extensionElements>
+      </callActivity>
+      <sequenceFlow id="flow-news-flash-call-activity" sourceRef="servicetask-set-user-task-vars-news-flash" targetRef="callactivity-news-flash"></sequenceFlow>
+    </subProcess>
+    <sequenceFlow id="flow-subprocess-news-flash-timer" sourceRef="subprocess-news-flash" targetRef="timerintermediatecatchevent-subprocess-news-flash-end"></sequenceFlow>
+    <boundaryEvent id="boundaryerror-news-flash" name="Error" attachedToRef="subprocess-news-flash">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${NewsFlashError}"></activiti:executionListener>
+      </extensionElements>
+      <errorEventDefinition errorRef="newsFlashError"></errorEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow-news-flash-error-timer" sourceRef="boundaryerror-news-flash" targetRef="timerintermediatecatchevent-subprocess-news-flash-end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_newsFlash">
+    <bpmndi:BPMNPlane bpmnElement="newsFlash" id="BPMNPlane_newsFlash">
+      <bpmndi:BPMNShape bpmnElement="startevent-news-flash" id="BPMNShape_startevent-news-flash">
+        <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent-news-flash" id="BPMNShape_endevent-news-flash">
+        <omgdc:Bounds height="35.0" width="35.0" x="924.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="timerintermediatecatchevent-subprocess-news-flash-end" id="BPMNShape_timerintermediatecatchevent-subprocess-news-flash-end">
+        <omgdc:Bounds height="35.0" width="35.0" x="840.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="timerintermediatecatchevent-subprocess-news-flash-start" id="BPMNShape_timerintermediatecatchevent-subprocess-news-flash-start">
+        <omgdc:Bounds height="35.0" width="35.0" x="100.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subprocess-news-flash" id="BPMNShape_subprocess-news-flash">
+        <omgdc:Bounds height="111.0" width="581.0" x="200.0" y="72.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent-subprocess-news-flash" id="BPMNShape_startevent-subprocess-news-flash">
+        <omgdc:Bounds height="35.0" width="35.0" x="230.0" y="111.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask-set-user-task-vars-news-flash" id="BPMNShape_servicetask-set-user-task-vars-news-flash">
+        <omgdc:Bounds height="55.0" width="105.0" x="310.0" y="101.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent-subprocess-news-flash" id="BPMNShape_endevent-subprocess-news-flash">
+        <omgdc:Bounds height="35.0" width="35.0" x="720.0" y="111.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callactivity-news-flash" id="BPMNShape_callactivity-news-flash">
+        <omgdc:Bounds height="55.0" width="171.0" x="480.0" y="101.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundaryerror-news-flash" id="BPMNShape_boundaryerror-news-flash">
+        <omgdc:Bounds height="30.0" width="30.0" x="754.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow-start-timer" id="BPMNEdge_flow-start-timer">
+        <omgdi:waypoint x="65.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="100.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-timer-end" id="BPMNEdge_flow-timer-end">
+        <omgdi:waypoint x="875.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="924.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-timer-subprocess-news-flash" id="BPMNEdge_flow-timer-subprocess-news-flash">
+        <omgdi:waypoint x="135.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="200.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-subprocess-news-flash-set-parameters" id="BPMNEdge_flow-subprocess-news-flash-set-parameters">
+        <omgdi:waypoint x="265.0" y="128.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="128.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-subprocess-news-flash-end" id="BPMNEdge_flow-subprocess-news-flash-end">
+        <omgdi:waypoint x="651.0" y="128.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="128.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-news-flash-call-activity" id="BPMNEdge_flow-news-flash-call-activity">
+        <omgdi:waypoint x="415.0" y="128.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="128.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-subprocess-news-flash-timer" id="BPMNEdge_flow-subprocess-news-flash-timer">
+        <omgdi:waypoint x="781.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow-news-flash-error-timer" id="BPMNEdge_flow-news-flash-error-timer">
+        <omgdi:waypoint x="784.0" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="857.0" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="857.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

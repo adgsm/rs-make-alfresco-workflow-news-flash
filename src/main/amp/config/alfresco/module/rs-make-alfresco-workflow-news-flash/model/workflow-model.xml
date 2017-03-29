@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="makenfwf:makeNewsFlashWorkflowModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<description>Make IT News Flash Workflow Model</description>
+	<author>Momcilo Dzunic</author>
+	<version>1.0</version>
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.make.rs/model/workflow/news-flash/1.0" prefix="makenfwf" />
+	</namespaces>
+
+	<types>
+		<type name="makenfwf:newsFlashWorkFlow">
+			<title>Make IT News Flash</title>
+			<parent>bpm:startTask</parent>
+			<properties>
+				<property name="makenfwf:locale">
+					<type>d:locale</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="makenfwf:initiator">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="makenfwf:resetTasks">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="makenfwf:newsFlash">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+					<multiple>true</multiple>
+				</property>
+			</properties>
+		</type>
+	</types>
+</model>
