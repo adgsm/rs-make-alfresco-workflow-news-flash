@@ -69,6 +69,12 @@
 			<version>0.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>rs.make.alfresco</groupId>
+			<artifactId>rs-make-alfresco-mail</artifactId>
+			<version>0.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 
         <!-- If we are running tests then make the H2 Scripts available
              Note. tests are skipped when you are running -Pamp-to-war -->

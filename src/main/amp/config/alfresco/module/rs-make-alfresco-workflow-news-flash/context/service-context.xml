@@ -17,4 +17,55 @@
 	limitations under the License.
 -->
 <beans>
+	<bean id="ActivitiBeanRegistryExtendsMakeWorkflowVars" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" depends-on="activitiBeanRegistry">
+		<property name="targetObject">
+			<ref bean="activitiBeanRegistry" />
+		</property>
+		<property name="targetMethod" value="put" />
+		<property name="arguments">
+			<list>
+				<value >makeWorkflowVars</value>
+				<ref bean="MakeWorkflowVars" />
+			</list>
+		</property>
+	</bean>
+	<bean id="ActivitiBeanRegistryExtendsMakeMailSend" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" depends-on="activitiBeanRegistry">
+		<property name="targetObject">
+			<ref bean="activitiBeanRegistry" />
+		</property>
+		<property name="targetMethod" value="put" />
+		<property name="arguments">
+			<list>
+				<value >makeMailSend</value>
+				<ref bean="MakeMailSend" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="AbstractActivitiBaseJavaDelegate" parent="baseJavaDelegate" abstract="true" depends-on="activitiBeanRegistry" />
+	<bean id="NewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlash" parent="AbstractActivitiBaseJavaDelegate">
+		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
+	</bean>
+	<bean id="NewsFlashCheckPrerequisites" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashCheckPrerequisites" parent="AbstractActivitiBaseJavaDelegate">
+		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
+	</bean>
+	<bean id="NewsFlashEnd" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashEnd" parent="AbstractActivitiBaseJavaDelegate" />
+	<bean id="NewsFlashError" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashError" parent="AbstractActivitiBaseJavaDelegate" />
+	<bean id="NewsFlashInitialization" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashInitialization" parent="AbstractActivitiBaseJavaDelegate">
+		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
+	</bean>
+	<bean id="NewsFlashSend" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSend" parent="AbstractActivitiBaseJavaDelegate">
+		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
+		<property name="makeMailSend" ref="MakeMailSend" />
+	</bean>
+	<bean id="NewsFlashStart" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashStart" parent="AbstractActivitiBaseJavaDelegate" />
+	<bean id="NewsFlashSetParametersForNewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSetParametersForNewsFlash" parent="AbstractActivitiBaseJavaDelegate">
+		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
+		<property name="newsFlashCheckPrerequisites" ref="NewsFlashCheckPrerequisites" />
+		<property name="newsFlashEnd" ref="NewsFlashEnd" />
+		<property name="newsFlashError" ref="NewsFlashError" />
+		<property name="newsFlashInitialization" ref="NewsFlashInitialization" />
+		<property name="newsFlashSend" ref="NewsFlashSend" />
+		<property name="newsFlashStart" ref="NewsFlashStart" />
+	</bean>
 </beans>
