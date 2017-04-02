@@ -30,7 +30,7 @@ import rs.make.alfresco.common.status.MakeStatus;
 public class Start extends DeclarativeWebScript{
 	private static Logger logger = Logger.getLogger( Start.class );
 
-	private final String WORKFLOW_DEFINITION_NAME = "news-flash";
+	private final String WORKFLOW_DEFINITION_NAME = "activiti$newsFlash";
 	private final String QUERY_RESET_KEY = "reset";
 	private final String QUERY_NEWS_FLASH_KEY = "news-flash";
 

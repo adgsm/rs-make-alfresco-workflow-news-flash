@@ -102,7 +102,7 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 			// check date
 			String dateAsISO = null;
 			Date date = (Date) nodeService.getProperty( newsFlash , NEWS_FLASH_DATE_QNAME );
-			if( date != null ){
+			if( date != null && date.getTime() > ( ( new Date() ).getTime() + 10000 ) ){ // if date is less then 10s in future send it without a delay
 				TimeZone tz = TimeZone.getTimeZone( "UTC" );
 				DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm'Z'" ); // Quoted "Z" to indicate UTC, no timezone offset
 				df.setTimeZone(tz);

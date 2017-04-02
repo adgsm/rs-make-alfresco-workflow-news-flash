@@ -61,6 +61,14 @@ public class SetParametersForNewsFlash extends BaseJavaDelegate{
 		this.newsFlashEnd = newsFlashEnd;
 	}
 
+	protected NewsFlashError newsFlashError;
+	public NewsFlashError getNewsFlashError() {
+		return newsFlashError;
+	}
+	public void setNewsFlashError( NewsFlashError newsFlashError ) {
+		this.newsFlashError = newsFlashError;
+	}
+
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		String authenticatedUserName = AuthenticationUtil.getFullyAuthenticatedUser();
@@ -82,6 +90,7 @@ public class SetParametersForNewsFlash extends BaseJavaDelegate{
 		executorsVars.put( "commonEmailScriptTaskCheckPrerequisitesVar" , newsFlashCheckPrerequisites );
 		executorsVars.put( "commonEmailScriptTaskSendVar" , newsFlashSend );
 		executorsVars.put( "commonEmailScriptTaskEndVar" , newsFlashEnd );
+		executorsVars.put( "commonEmailScriptTaskErrorVar" , newsFlashError );
 
 		makeWorkflowVars.setExecutionLocalVars( execution , executorsVars );
 	}

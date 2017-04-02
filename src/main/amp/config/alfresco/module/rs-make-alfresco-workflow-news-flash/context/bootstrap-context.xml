@@ -21,7 +21,7 @@
 			<list>
 				<props>
 					<prop key="engineId">activiti</prop>
-					<prop key="location">alfresco/module/${project.artifactId}/workflows/newsf-flash.bpmn</prop>
+					<prop key="location">alfresco/module/${project.artifactId}/workflows/news-flash.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">true</prop>
 				</props>

@@ -59,7 +59,7 @@
 		<property name="makeMailSend" ref="MakeMailSend" />
 	</bean>
 	<bean id="NewsFlashStart" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashStart" parent="AbstractActivitiBaseJavaDelegate" />
-	<bean id="NewsFlashSetParametersForNewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSetParametersForNewsFlash" parent="AbstractActivitiBaseJavaDelegate">
+	<bean id="SetParametersForNewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.SetParametersForNewsFlash" parent="AbstractActivitiBaseJavaDelegate">
 		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
 		<property name="newsFlashCheckPrerequisites" ref="NewsFlashCheckPrerequisites" />
 		<property name="newsFlashEnd" ref="NewsFlashEnd" />

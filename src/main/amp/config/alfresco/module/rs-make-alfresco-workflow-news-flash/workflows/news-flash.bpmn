@@ -36,15 +36,13 @@
           <activiti:in source="bpm_workflowPriority" target="bpm_workflowPriority"></activiti:in>
           <activiti:in source="makenfwf_locale" target="makenfwf_locale"></activiti:in>
           <activiti:in source="newsFlash" target="newsFlash"></activiti:in>
-          <activiti:in source="bpm_package" target="bpm_package"></activiti:in>
           <activiti:in source="initiatorUserName" target="initiatorUserName"></activiti:in>
-          <activiti:in source="candidate" target="candidate"></activiti:in>
-          <activiti:in source="candidateForm" target="candidateForm"></activiti:in>
-          <activiti:in source="taskStart" target="taskStart"></activiti:in>
           <activiti:in source="commonEmailScriptTaskInitializationVar" target="commonEmailScriptTaskInitializationVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskStartVar" target="commonEmailScriptTaskStartVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskCheckPrerequisitesVar" target="commonEmailScriptTaskCheckPrerequisitesVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskEndVar" target="commonEmailScriptTaskEndVar"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskSendVar" target="commonEmailScriptTaskSendVar"></activiti:in>
+          <activiti:in source="commonEmailScriptTaskErrorVar" target="commonEmailScriptTaskErrorVar"></activiti:in>
         </extensionElements>
       </callActivity>
       <sequenceFlow id="flow-news-flash-call-activity" sourceRef="servicetask-set-user-task-vars-news-flash" targetRef="callactivity-news-flash"></sequenceFlow>
