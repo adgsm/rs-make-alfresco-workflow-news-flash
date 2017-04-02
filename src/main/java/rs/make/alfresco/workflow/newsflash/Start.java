@@ -1,6 +1,7 @@
 package rs.make.alfresco.workflow.newsflash;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class Start extends DeclarativeWebScript{
 		parameters.put( LOCALE_QNAME , locale );
 		parameters.put( INITIATOR_USER_NAME_QNAME , initiator );
 		parameters.put( RESET_TASKS_QNAME , resetTasks );
-		parameters.put( NEWS_FLASH_LIST_QNAME , (Serializable) newsFlashList );
+		parameters.put( NEWS_FLASH_LIST_QNAME , new ArrayList<NodeRef>( newsFlashList ) );
 		parameters.put( WORKFLOW_DESCRIPTION_QNAME , WORKFLOW_DEFINITION_NAME );
 		parameters.put( WORKFLOW_DUEDATE_QNAME , WORKFLOW_DUE_DATE );
 		parameters.put( WORKFLOW_PRIORITY_QNAME , WORKFLOW_PRIORITY );

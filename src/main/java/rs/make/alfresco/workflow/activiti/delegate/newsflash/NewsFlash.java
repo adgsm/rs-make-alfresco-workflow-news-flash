@@ -19,7 +19,7 @@ public class NewsFlash extends BaseJavaDelegate implements Serializable{
 	private final String NEWS_FLASH_VARIABLE_PREFFIX = "makenfwf_";
 	private DelegateExecution EXECUTION = null;
 
-	protected MakeWorkflowVars makeWorkflowVars;
+	protected transient MakeWorkflowVars makeWorkflowVars;
 	public MakeWorkflowVars getMakeWorkflowVars() {
 		return makeWorkflowVars;
 	}
@@ -44,6 +44,7 @@ public class NewsFlash extends BaseJavaDelegate implements Serializable{
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
 		Collection<NodeRef> newsFlashCollection = (Collection<NodeRef>) makeWorkflowVars.getExecutionLocalVar( EXECUTION , "newsFlash" , NEWS_FLASH_VARIABLE_PREFFIX );
+
 		logger.debug( String.format( "Number of items in a collection is: %d" , newsFlashCollection.size() ) );
 		return newsFlashCollection;
 	}

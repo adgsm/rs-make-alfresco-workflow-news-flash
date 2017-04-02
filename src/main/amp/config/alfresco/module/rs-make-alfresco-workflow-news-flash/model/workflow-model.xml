@@ -14,7 +14,7 @@
 	</namespaces>
 
 	<types>
-		<type name="makenfwf:newsFlashWorkFlow">
+		<type name="makenfwf:newsFlashWorkflow">
 			<title>Make IT News Flash</title>
 			<parent>bpm:startTask</parent>
 			<properties>

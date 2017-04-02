@@ -187,9 +187,9 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 
 	private void sendEmail( List<String> to , List<String> cc , List<String> bcc , String subject , String body, Map<Pair<String,String>,byte[]> attachments ){
 		try {
-			makeMailSend.init( String.join( "," , to ) , String.join( "," , cc ) , String.join( "," , bcc ) , subject , body , attachments , true );
+			makeMailSend.init( ( ( to != null ) ? String.join( "," , to ) : null ) , ( ( cc != null ) ? String.join( "," , cc ) : null ) , ( ( bcc != null ) ? String.join( "," , bcc ) : null ) , subject , body , attachments , true );
 		} catch ( Exception e ) {
-			String errorMessage = "Error occured whilst send news-flash. " + e.getMessage();
+			String errorMessage = "Error occured whilst sending news-flash. " + e.getMessage();
 			logger.error( errorMessage );
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
@@ -200,7 +200,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 		try {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put( ContentModel.PROP_ORIGINATOR , authenticatedUserName );
-			properties.put( ContentModel.PROP_ADDRESSEE , String.format( "%s,%s,%s" , String.join( "," , to ) , String.join( "," , cc ) , String.join( "," , bcc ) ) );
+			properties.put( ContentModel.PROP_ADDRESSEE , String.format( "%s,%s,%s" , ( ( to != null ) ? String.join( "," , to ) : "" ) ,  ( ( cc != null ) ? String.join( "," , cc ) : "" ) ,  ( ( bcc != null ) ? String.join( "," , bcc ) : "" ) ) );
 			properties.put( ContentModel.PROP_SUBJECT , subject );
 			properties.put( ContentModel.PROP_SENTDATE , new Date() );
 			nodeService.addAspect( nodeRef , ContentModel.ASPECT_EMAILED, properties );

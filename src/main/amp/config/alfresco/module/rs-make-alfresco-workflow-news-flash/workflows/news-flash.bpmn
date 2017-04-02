@@ -4,7 +4,7 @@
     <extensionElements>
       <activiti:executionListener event="start" delegateExpression="${NewsFlash}"></activiti:executionListener>
     </extensionElements>
-    <startEvent id="startevent-news-flash" name="Start" activiti:formKey="makenfwf:newsFlash"></startEvent>
+    <startEvent id="startevent-news-flash" name="Start" activiti:formKey="makenfwf:newsFlashWorkflow"></startEvent>
     <endEvent id="endevent-news-flash" name="End"></endEvent>
     <sequenceFlow id="flow-start-timer" sourceRef="startevent-news-flash" targetRef="timerintermediatecatchevent-subprocess-news-flash-start"></sequenceFlow>
     <sequenceFlow id="flow-timer-end" sourceRef="timerintermediatecatchevent-subprocess-news-flash-end" targetRef="endevent-news-flash"></sequenceFlow>
