@@ -10,10 +10,15 @@ import java.util.Map;
 
 import org.activiti.engine.delegate.BpmnError;
 import org.activiti.engine.delegate.DelegateExecution;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.context.Context;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.workflow.WorkflowModel;
+import org.alfresco.repo.workflow.activiti.ActivitiConstants;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -28,22 +33,6 @@ import rs.make.alfresco.mail.MakeMailSend;
 public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger( NewsFlashSend.class );
-
-	protected transient MakeWorkflowVars makeWorkflowVars;
-	public MakeWorkflowVars getMakeWorkflowVars() {
-		return makeWorkflowVars;
-	}
-	public void setMakeWorkflowVars( MakeWorkflowVars makeWorkflowVars ) {
-		this.makeWorkflowVars = makeWorkflowVars;
-	}
-
-	protected transient MakeMailSend makeMailSend;
-	public MakeMailSend getMakeMailSend() {
-		return makeMailSend;
-	}
-	public void setMakeMailSend( MakeMailSend makeMailSend ) {
-		this.makeMailSend = makeMailSend;
-	}
 
 	private final String NEWS_FLASH_NAMESPACE_URI = "http://www.make.rs/model/newsflash/1.0";
 	private final QName NEWS_FLASH_TO_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "to" );
@@ -72,7 +61,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 		String body = getEmailBody( newsFlash );
 		Map<Pair<String,String>,byte[]> attachments = getEmailAttachments( newsFlash );
 		sendEmail( to , cc , bcc , subject , body , attachments );
-		markNodeAsSent( newsFlash , authenticatedUserName , to , cc , bcc , subject );
+		markNodeAsSent( execution , newsFlash , authenticatedUserName , to , cc , bcc , subject );
 
 		AuthenticationUtil.setRunAsUser( authenticatedUserName );
 	}
@@ -80,6 +69,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	private NodeRef getNewsFlash( DelegateExecution execution ){
 		NodeRef newsFlash = null;
 		try{
+			MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
 			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "newsFlash" );
 			newsFlash = newsFlashActivitiScriptNode.getNodeRef();
 		}
@@ -187,6 +177,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 
 	private void sendEmail( List<String> to , List<String> cc , List<String> bcc , String subject , String body, Map<Pair<String,String>,byte[]> attachments ){
 		try {
+			MakeMailSend makeMailSend = (MakeMailSend) getBean( "makeMailSend" );
 			makeMailSend.init( ( ( to != null ) ? String.join( "," , to ) : null ) , ( ( cc != null ) ? String.join( "," , cc ) : null ) , ( ( bcc != null ) ? String.join( "," , bcc ) : null ) , subject , body , attachments , true );
 		} catch ( Exception e ) {
 			String errorMessage = "Error occured whilst sending news-flash. " + e.getMessage();
@@ -195,10 +186,11 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 		}
 	}
 
-	private void markNodeAsSent( NodeRef nodeRef , String authenticatedUserName , List<String> to , List<String> cc , List<String> bcc , String subject ){
-		NodeService nodeService = getServiceRegistry().getNodeService();
+	private void markNodeAsSent( DelegateExecution execution , NodeRef nodeRef , String authenticatedUserName , List<String> to , List<String> cc , List<String> bcc , String subject ){
+		NodeService nodeService = getNodeService();
 		try {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put( WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , execution.getProcessInstanceId() );
 			properties.put( ContentModel.PROP_ORIGINATOR , authenticatedUserName );
 			properties.put( ContentModel.PROP_ADDRESSEE , String.format( "%s,%s,%s" , ( ( to != null ) ? String.join( "," , to ) : "" ) ,  ( ( cc != null ) ? String.join( "," , cc ) : "" ) ,  ( ( bcc != null ) ? String.join( "," , bcc ) : "" ) ) );
 			properties.put( ContentModel.PROP_SUBJECT , subject );
@@ -212,7 +204,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	}
 
 	private NodeService getNodeService(){
-		NodeService nodeService = getServiceRegistry().getNodeService();
+		NodeService nodeService = getServiceRegistryFromConfig().getNodeService();
 		if( nodeService == null ){
 			String errorMessage = "Node service could not be instanciated.";
 			logger.error( errorMessage );
@@ -222,12 +214,29 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	}
 
 	private ContentService getContentService(){
-		ContentService contentService = getServiceRegistry().getContentService();
+		ContentService contentService = getServiceRegistryFromConfig().getContentService();
 		if( contentService == null ){
 			String errorMessage = "Content service could not be instanciated.";
 			logger.error( errorMessage );
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
 		return contentService;
+	}
+
+	private ServiceRegistry getServiceRegistryFromConfig(){
+		return (ServiceRegistry) getBean( ActivitiConstants.SERVICE_REGISTRY_BEAN_KEY );
+	}
+
+	private Object getBean( String beanId ){
+		Object bean = null;
+		ProcessEngineConfigurationImpl config = Context.getProcessEngineConfiguration();
+		bean = config.getBeans().get( beanId );
+		if( bean == null ){
+			String errorMessage = "Error occured whilst trying to invoke bean \"" + beanId + "\". ";
+			logger.error( errorMessage );
+			throw new BpmnError( "screeningConclusionError" , errorMessage );
+		}
+		logger.debug( "Bean \"" + beanId + "\" invoked." );
+		return bean;
 	}
 }

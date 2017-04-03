@@ -17,6 +17,7 @@
 	limitations under the License.
 -->
 <beans>
+<!-- Inject needed beans into activityuBeanRegistry for latter "on-fly" use in workflow delegateclasses which are executing after process stopping elements (e.g. timers, etc) -->
 	<bean id="ActivitiBeanRegistryExtendsMakeWorkflowVars" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" depends-on="activitiBeanRegistry">
 		<property name="targetObject">
 			<ref bean="activitiBeanRegistry" />
@@ -54,10 +55,8 @@
 	<bean id="NewsFlashInitialization" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashInitialization" parent="AbstractActivitiBaseJavaDelegate">
 		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
 	</bean>
-	<bean id="NewsFlashSend" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSend" parent="AbstractActivitiBaseJavaDelegate">
-		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
-		<property name="makeMailSend" ref="MakeMailSend" />
-	</bean>
+	<!-- NewsFlashSend is being executed after timer so we have to use needed (above injected) beans directly in a code from activityuBeanRegistry. Therefore none to be injected here below -->
+	<bean id="NewsFlashSend" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSend" parent="AbstractActivitiBaseJavaDelegate" />
 	<bean id="NewsFlashStart" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashStart" parent="AbstractActivitiBaseJavaDelegate" />
 	<bean id="SetParametersForNewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.SetParametersForNewsFlash" parent="AbstractActivitiBaseJavaDelegate">
 		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
