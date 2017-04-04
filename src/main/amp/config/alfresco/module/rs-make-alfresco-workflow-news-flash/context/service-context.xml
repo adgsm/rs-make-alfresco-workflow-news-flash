@@ -44,17 +44,11 @@
 	</bean>
 
 	<bean id="AbstractActivitiBaseJavaDelegate" parent="baseJavaDelegate" abstract="true" depends-on="activitiBeanRegistry" />
-	<bean id="NewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlash" parent="AbstractActivitiBaseJavaDelegate">
-		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
-	</bean>
-	<bean id="NewsFlashCheckPrerequisites" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashCheckPrerequisites" parent="AbstractActivitiBaseJavaDelegate">
-		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
-	</bean>
+	<bean id="NewsFlash" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlash" parent="AbstractActivitiBaseJavaDelegate" />
+	<bean id="NewsFlashCheckPrerequisites" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashCheckPrerequisites" parent="AbstractActivitiBaseJavaDelegate" />
 	<bean id="NewsFlashEnd" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashEnd" parent="AbstractActivitiBaseJavaDelegate" />
 	<bean id="NewsFlashError" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashError" parent="AbstractActivitiBaseJavaDelegate" />
-	<bean id="NewsFlashInitialization" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashInitialization" parent="AbstractActivitiBaseJavaDelegate">
-		<property name="makeWorkflowVars" ref="MakeWorkflowVars" />
-	</bean>
+	<bean id="NewsFlashInitialization" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashInitialization" parent="AbstractActivitiBaseJavaDelegate" />
 	<!-- NewsFlashSend is being executed after timer so we have to use needed (above injected) beans directly in a code from activityuBeanRegistry. Therefore none to be injected here below -->
 	<bean id="NewsFlashSend" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashSend" parent="AbstractActivitiBaseJavaDelegate" />
 	<bean id="NewsFlashStart" class="rs.make.alfresco.workflow.activiti.delegate.newsflash.NewsFlashStart" parent="AbstractActivitiBaseJavaDelegate" />

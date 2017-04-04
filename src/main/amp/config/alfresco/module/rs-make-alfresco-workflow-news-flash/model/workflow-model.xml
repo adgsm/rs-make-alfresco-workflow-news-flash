@@ -14,7 +14,7 @@
 	</namespaces>
 
 	<types>
-		<type name="makenfwf:newsFlashWorkflow">
+		<type name="makenfwf:newsFlash">
 			<title>Make IT News Flash</title>
 			<parent>bpm:startTask</parent>
 			<properties>
@@ -30,7 +30,7 @@
 					<type>d:boolean</type>
 					<default>false</default>
 				</property>
-				<property name="makenfwf:newsFlash">
+				<property name="makenfwf:item">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
 					<multiple>true</multiple>

@@ -4,7 +4,7 @@
     <extensionElements>
       <activiti:executionListener event="start" delegateExpression="${NewsFlash}"></activiti:executionListener>
     </extensionElements>
-    <startEvent id="startevent-news-flash" name="Start" activiti:formKey="makenfwf:newsFlashWorkflow"></startEvent>
+    <startEvent id="startevent-news-flash" name="Start" activiti:formKey="makenfwf:newsFlash"></startEvent>
     <endEvent id="endevent-news-flash" name="End"></endEvent>
     <sequenceFlow id="flow-start-timer" sourceRef="startevent-news-flash" targetRef="timerintermediatecatchevent-subprocess-news-flash-start"></sequenceFlow>
     <sequenceFlow id="flow-timer-end" sourceRef="timerintermediatecatchevent-subprocess-news-flash-end" targetRef="endevent-news-flash"></sequenceFlow>
@@ -23,7 +23,7 @@
       <extensionElements>
         <activiti:mapException errorCode="newsFlashError"></activiti:mapException>
       </extensionElements>
-      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="${NewsFlash.subProcessInstances()}" activiti:elementVariable="newsFlash"></multiInstanceLoopCharacteristics>
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="${NewsFlash.subProcessInstances()}" activiti:elementVariable="flash"></multiInstanceLoopCharacteristics>
       <startEvent id="startevent-subprocess-news-flash" name="Start"></startEvent>
       <serviceTask id="servicetask-set-user-task-vars-news-flash" name="Set parameters" activiti:delegateExpression="${SetParametersForNewsFlash}"></serviceTask>
       <sequenceFlow id="flow-subprocess-news-flash-set-parameters" sourceRef="startevent-subprocess-news-flash" targetRef="servicetask-set-user-task-vars-news-flash"></sequenceFlow>
@@ -35,7 +35,8 @@
           <activiti:in source="bpm_workflowDueDate" target="bpm_workflowDueDate"></activiti:in>
           <activiti:in source="bpm_workflowPriority" target="bpm_workflowPriority"></activiti:in>
           <activiti:in source="makenfwf_locale" target="makenfwf_locale"></activiti:in>
-          <activiti:in source="newsFlash" target="newsFlash"></activiti:in>
+          <activiti:in source="makenfwf_resetTasks" target="makenfwf_resetTasks"></activiti:in>
+          <activiti:in source="flash" target="flash"></activiti:in>
           <activiti:in source="initiatorUserName" target="initiatorUserName"></activiti:in>
           <activiti:in source="commonEmailScriptTaskInitializationVar" target="commonEmailScriptTaskInitializationVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskStartVar" target="commonEmailScriptTaskStartVar"></activiti:in>

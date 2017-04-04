@@ -54,23 +54,40 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
 
-		List<String> to = getEmailTo( newsFlash );
-		List<String> cc = getEmailCc( newsFlash );
-		List<String> bcc = getEmailBcc( newsFlash );
-		String subject = getEmailSubject( newsFlash );
-		String body = getEmailBody( newsFlash );
-		Map<Pair<String,String>,byte[]> attachments = getEmailAttachments( newsFlash );
-		sendEmail( to , cc , bcc , subject , body , attachments );
-		markNodeAsSent( execution , newsFlash , authenticatedUserName , to , cc , bcc , subject );
+		Boolean sent = isNewsFlashSentInThisInstance( execution );
+		if( sent == null || !sent.booleanValue() ){
+			List<String> to = getEmailTo( newsFlash );
+			List<String> cc = getEmailCc( newsFlash );
+			List<String> bcc = getEmailBcc( newsFlash );
+			String subject = getEmailSubject( newsFlash );
+			String body = getEmailBody( newsFlash );
+			Map<Pair<String,String>,byte[]> attachments = getEmailAttachments( newsFlash );
+			sendEmail( execution , to , cc , bcc , subject , body , attachments );
+			markNodeAsSent( execution , newsFlash , authenticatedUserName , to , cc , bcc , subject );
+		}
 
 		AuthenticationUtil.setRunAsUser( authenticatedUserName );
+	}
+
+	private Boolean isNewsFlashSentInThisInstance( DelegateExecution execution ){
+		Boolean sent = false;
+		try{
+			MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
+			sent = (Boolean) makeWorkflowVars.getExecutionLocalVar( execution , "sent" );
+		}
+		catch ( Exception e ) {
+			String errorMessage = "Error occured whilst trying to check is news-flash sent in this workflow instance. " + e.getMessage();
+			logger.error( errorMessage );
+			throw new BpmnError( "newsFlashError" , errorMessage );
+		}
+		return sent;
 	}
 
 	private NodeRef getNewsFlash( DelegateExecution execution ){
 		NodeRef newsFlash = null;
 		try{
 			MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
-			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "newsFlash" );
+			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "flash" );
 			newsFlash = newsFlashActivitiScriptNode.getNodeRef();
 		}
 		catch ( Exception e ) {
@@ -175,10 +192,12 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 		}
 	}
 
-	private void sendEmail( List<String> to , List<String> cc , List<String> bcc , String subject , String body, Map<Pair<String,String>,byte[]> attachments ){
+	private void sendEmail( DelegateExecution execution , List<String> to , List<String> cc , List<String> bcc , String subject , String body, Map<Pair<String,String>,byte[]> attachments ){
 		try {
+			MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
 			MakeMailSend makeMailSend = (MakeMailSend) getBean( "makeMailSend" );
 			makeMailSend.init( ( ( to != null ) ? String.join( "," , to ) : null ) , ( ( cc != null ) ? String.join( "," , cc ) : null ) , ( ( bcc != null ) ? String.join( "," , bcc ) : null ) , subject , body , attachments , true );
+			makeWorkflowVars.setExecutionLocalVar( execution , "sent" , true );
 		} catch ( Exception e ) {
 			String errorMessage = "Error occured whilst sending news-flash. " + e.getMessage();
 			logger.error( errorMessage );

@@ -42,7 +42,7 @@ public class Start extends DeclarativeWebScript{
 	private final QName LOCALE_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "locale" );
 	private final QName INITIATOR_USER_NAME_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "initiator" );
 	private final QName RESET_TASKS_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "resetTasks" );
-	private final QName NEWS_FLASH_LIST_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "newsFlash" );
+	private final QName NEWS_FLASH_LIST_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "item" );
 	private final String BPM_NAMESPACE_URI = NamespaceService.BPM_MODEL_1_0_URI;
 	private final QName WORKFLOW_DESCRIPTION_QNAME = QName.createQName( BPM_NAMESPACE_URI , "workflowDescription" );
 	private final QName WORKFLOW_DUEDATE_QNAME = QName.createQName( BPM_NAMESPACE_URI , "workflowDueDate" );

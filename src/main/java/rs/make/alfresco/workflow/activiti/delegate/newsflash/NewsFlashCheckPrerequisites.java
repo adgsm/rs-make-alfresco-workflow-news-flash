@@ -11,9 +11,14 @@ import java.util.TimeZone;
 
 import org.activiti.engine.delegate.BpmnError;
 import org.activiti.engine.delegate.DelegateExecution;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.context.Context;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.workflow.WorkflowModel;
+import org.alfresco.repo.workflow.activiti.ActivitiConstants;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -25,14 +30,6 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = Logger.getLogger( NewsFlashCheckPrerequisites.class );
-
-	protected transient MakeWorkflowVars makeWorkflowVars;
-	public MakeWorkflowVars getMakeWorkflowVars() {
-		return makeWorkflowVars;
-	}
-	public void setMakeWorkflowVars( MakeWorkflowVars makeWorkflowVars ) {
-		this.makeWorkflowVars = makeWorkflowVars;
-	}
 
 	private final String NEWS_FLASH_NAMESPACE_URI = "http://www.make.rs/model/newsflash/1.0";
 	private final QName NEWS_FLASH_TO_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "to" );
@@ -62,9 +59,12 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 
 	private NodeRef getNewsFlash( DelegateExecution execution ){
 		NodeRef newsFlash = null;
+		NodeService nodeService = getNodeService();
+		MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
 		try{
-			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "newsFlash" );
+			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "flash" );
 			newsFlash = newsFlashActivitiScriptNode.getNodeRef();
+			nodeService.setProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , execution.getProcessInstanceId() );
 		}
 		catch ( Exception e ) {
 			String errorMessage = "Error occured whilst trying to retrieve news-flash. " + e.getMessage();
@@ -76,6 +76,7 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 
 	private void setVars( DelegateExecution execution , NodeRef newsFlash ){
 		NodeService nodeService = getNodeService();
+		MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
 		Map<String,Object> workflowCommonEmailScriptVars = new HashMap<String,Object>();
 		try{
 			// check recipients
@@ -120,12 +121,29 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 	}
 
 	private NodeService getNodeService(){
-		NodeService nodeService = getServiceRegistry().getNodeService();
+		NodeService nodeService = getServiceRegistryFromConfig().getNodeService();
 		if( nodeService == null ){
 			String errorMessage = "Node service could not be instanciated.";
 			logger.error( errorMessage );
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
 		return nodeService;
+	}
+
+	private ServiceRegistry getServiceRegistryFromConfig(){
+		return (ServiceRegistry) getBean( ActivitiConstants.SERVICE_REGISTRY_BEAN_KEY );
+	}
+
+	private Object getBean( String beanId ){
+		Object bean = null;
+		ProcessEngineConfigurationImpl config = Context.getProcessEngineConfiguration();
+		bean = config.getBeans().get( beanId );
+		if( bean == null ){
+			String errorMessage = "Error occured whilst trying to invoke bean \"" + beanId + "\". ";
+			logger.error( errorMessage );
+			throw new BpmnError( "screeningConclusionError" , errorMessage );
+		}
+		logger.debug( "Bean \"" + beanId + "\" invoked." );
+		return bean;
 	}
 }
