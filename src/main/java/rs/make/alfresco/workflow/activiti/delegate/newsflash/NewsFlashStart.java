@@ -47,10 +47,8 @@ public class NewsFlashStart extends BaseJavaDelegate implements Serializable{
 
 		NodeRef newsFlash = getNewsFlash( execution );
 		try{
-			String workflowInstanceId = getWorkflowInstanceId( newsFlash , execution );
+			String workflowInstanceId = getWorkflowInstanceId( newsFlash , execution , null );
 			if( workflowInstanceId != null ){
-				String parentWorkflowInstanceId = execution.getParentId();
-
 				WorkflowInstance workflowInstance = workflowService.getWorkflowById( ACTIVITI_PREFIX + workflowInstanceId );
 				logger.debug( "workflowInstance: " + workflowInstance );
 				if( workflowInstance != null && workflowInstance.isActive() ){
@@ -59,12 +57,13 @@ public class NewsFlashStart extends BaseJavaDelegate implements Serializable{
 				}
 				nodeService.setProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , null );
 
-				if( parentWorkflowInstanceId != null ) {
-					WorkflowInstance parentWorkflowInstance = workflowService.getWorkflowById( ACTIVITI_PREFIX + parentWorkflowInstanceId );
+				String mainWorkflowInstanceId = getWorkflowInstanceId( newsFlash , execution , new Boolean( true ) );
+				if( mainWorkflowInstanceId != null ) {
+					WorkflowInstance parentWorkflowInstance = workflowService.getWorkflowById( ACTIVITI_PREFIX + mainWorkflowInstanceId );
 					logger.debug( "parentWorkflowInstance: " + parentWorkflowInstance );
 					if( parentWorkflowInstance != null && parentWorkflowInstance.isActive() ) {
 						logger.debug( "Cancelling parentWorkflowInstance: " + parentWorkflowInstance.getId() );
-						workflowService.cancelWorkflow( ACTIVITI_PREFIX + parentWorkflowInstanceId );
+						workflowService.cancelWorkflow( ACTIVITI_PREFIX + mainWorkflowInstanceId );
 					}
 				}
 			}
@@ -105,11 +104,11 @@ public class NewsFlashStart extends BaseJavaDelegate implements Serializable{
 		return newsFlash;
 	}
 
-	private String getWorkflowInstanceId( NodeRef newsFlash , DelegateExecution execution ){
+	private String getWorkflowInstanceId( NodeRef newsFlash , DelegateExecution execution , Boolean mainProcessInstance ){
 		NodeService nodeService = getNodeService();
 		String workflowInstanceId = null;
 		try{
-			workflowInstanceId = (String) nodeService.getProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_INSTANCE_ID );
+			workflowInstanceId = (String) nodeService.getProperty( newsFlash , ( ( mainProcessInstance == null || !mainProcessInstance.booleanValue() ) ? WorkflowModel.PROP_WORKFLOW_INSTANCE_ID : WorkflowModel.PROP_WORKFLOW_DESCRIPTION ) );
 		}
 		catch ( Exception e ) {
 			String errorMessage = "Error occured whilst trying to check is news-flash sent in this workflow instance. " + e.getMessage();

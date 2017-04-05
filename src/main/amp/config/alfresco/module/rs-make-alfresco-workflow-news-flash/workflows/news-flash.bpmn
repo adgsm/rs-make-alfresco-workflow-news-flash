@@ -44,6 +44,7 @@
           <activiti:in source="commonEmailScriptTaskEndVar" target="commonEmailScriptTaskEndVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskSendVar" target="commonEmailScriptTaskSendVar"></activiti:in>
           <activiti:in source="commonEmailScriptTaskErrorVar" target="commonEmailScriptTaskErrorVar"></activiti:in>
+          <activiti:in source="mainProcessInstanceId" target="mainProcessInstanceId"></activiti:in>
         </extensionElements>
       </callActivity>
       <sequenceFlow id="flow-news-flash-call-activity" sourceRef="servicetask-set-user-task-vars-news-flash" targetRef="callactivity-news-flash"></sequenceFlow>

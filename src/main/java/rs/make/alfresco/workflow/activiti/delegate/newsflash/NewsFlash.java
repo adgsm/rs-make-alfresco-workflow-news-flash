@@ -32,6 +32,7 @@ public class NewsFlash extends BaseJavaDelegate implements Serializable{
 		EXECUTION = execution;
 
 		setIdentity( execution );
+		setMainProcessInstanceId( execution );
 		setStartTimer( execution );
 		setEndTimer( execution );
 
@@ -71,6 +72,11 @@ public class NewsFlash extends BaseJavaDelegate implements Serializable{
 			logger.debug( e.getMessage() );
 			identityService.setAuthenticatedUserId( null );
 		}
+	}
+
+	private void setMainProcessInstanceId( DelegateExecution execution ){
+		MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
+		makeWorkflowVars.setExecutionLocalVar( execution , "mainProcessInstanceId" , execution.getProcessInstanceId() );
 	}
 
 	private void setStartTimer( DelegateExecution execution ){

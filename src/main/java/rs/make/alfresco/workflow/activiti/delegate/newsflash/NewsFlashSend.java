@@ -209,7 +209,9 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 		NodeService nodeService = getNodeService();
 		try {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put( WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , execution.getProcessInstanceId() );
+			properties.put( WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , null );
+			properties.put( WorkflowModel.PROP_WORKFLOW_DESCRIPTION , null );
+
 			properties.put( ContentModel.PROP_ORIGINATOR , authenticatedUserName );
 			properties.put( ContentModel.PROP_ADDRESSEE , String.format( "%s,%s,%s" , ( ( to != null ) ? String.join( "," , to ) : "" ) ,  ( ( cc != null ) ? String.join( "," , cc ) : "" ) ,  ( ( bcc != null ) ? String.join( "," , bcc ) : "" ) ) );
 			properties.put( ContentModel.PROP_SUBJECT , subject );

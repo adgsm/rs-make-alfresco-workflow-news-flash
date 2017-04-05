@@ -52,6 +52,7 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 			logger.error( errorMessage );
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
+		markNewsFlashAsWorkflowed( execution , newsFlash );
 		setVars( execution , newsFlash );
 
 		AuthenticationUtil.setRunAsUser( authenticatedUserName );
@@ -59,12 +60,10 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 
 	private NodeRef getNewsFlash( DelegateExecution execution ){
 		NodeRef newsFlash = null;
-		NodeService nodeService = getNodeService();
 		MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
 		try{
 			ActivitiScriptNode newsFlashActivitiScriptNode = (ActivitiScriptNode) makeWorkflowVars.getExecutionLocalVar( execution , "flash" );
 			newsFlash = newsFlashActivitiScriptNode.getNodeRef();
-			nodeService.setProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , execution.getProcessInstanceId() );
 		}
 		catch ( Exception e ) {
 			String errorMessage = "Error occured whilst trying to retrieve news-flash. " + e.getMessage();
@@ -72,6 +71,21 @@ public class NewsFlashCheckPrerequisites extends BaseJavaDelegate implements Ser
 			throw new BpmnError( "newsFlashError" , errorMessage );
 		}
 		return newsFlash;
+	}
+
+	private void markNewsFlashAsWorkflowed( DelegateExecution execution , NodeRef newsFlash ){
+		NodeService nodeService = getNodeService();
+		MakeWorkflowVars makeWorkflowVars = (MakeWorkflowVars) getBean( "makeWorkflowVars" );
+		try{
+			String mainProcessInstanceId = (String) makeWorkflowVars.getExecutionLocalVar( execution , "mainProcessInstanceId" );
+			nodeService.setProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , execution.getProcessInstanceId() );
+			nodeService.setProperty( newsFlash , WorkflowModel.PROP_WORKFLOW_DESCRIPTION , mainProcessInstanceId );
+		}
+		catch ( Exception e ) {
+			String errorMessage = "Error occured whilst trying to mark news-flash as workflowed. " + e.getMessage();
+			logger.error( errorMessage );
+			throw new BpmnError( "newsFlashError" , errorMessage );
+		}
 	}
 
 	private void setVars( DelegateExecution execution , NodeRef newsFlash ){
