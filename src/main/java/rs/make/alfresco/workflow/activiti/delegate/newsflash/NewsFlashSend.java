@@ -175,7 +175,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 			if( nodeRefs != null ){
 				for( NodeRef nodeRef : nodeRefs ){
 					String filename = (String) nodeService.getProperty( nodeRef , ContentModel.PROP_NAME );
-					ContentReader contentReader = contentService.getReader( newsFlash , ContentModel.PROP_CONTENT );
+					ContentReader contentReader = contentService.getReader( nodeRef , ContentModel.PROP_CONTENT );
 					String mimetype = contentReader.getMimetype();
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					contentReader.getContent( outputStream );
