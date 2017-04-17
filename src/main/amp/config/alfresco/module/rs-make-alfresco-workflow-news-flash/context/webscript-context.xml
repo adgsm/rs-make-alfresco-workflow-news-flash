@@ -22,4 +22,10 @@
 		<property name="makeStatus" ref="MakeStatus" />
 		<property name="workflowService" ref="WorkflowService" />
 	</bean>
+	<bean id="webscript.rs.make.alfresco.workflow.newsflash.cancel-news-flash-workflow.get" class="rs.make.alfresco.workflow.newsflash.CancelNewsFlashWorkflow" parent="webscript">
+		<property name="makeLocale" ref="MakeLocale" />
+		<property name="makeStatus" ref="MakeStatus" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="workflowService" ref="WorkflowService" />
+	</bean>
 </beans>

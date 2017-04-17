@@ -36,7 +36,7 @@ public class NewsFlashStart extends BaseJavaDelegate implements Serializable{
 		resetWorkflow( execution );
 
 		AuthenticationUtil.setRunAsUser( authenticatedUserName );
-}
+	}
 
 	private void resetWorkflow( DelegateExecution execution ){
 		boolean resetTasks = getResetTask( execution );

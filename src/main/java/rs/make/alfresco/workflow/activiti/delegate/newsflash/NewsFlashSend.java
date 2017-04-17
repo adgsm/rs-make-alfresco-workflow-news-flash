@@ -40,6 +40,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	private final QName NEWS_FLASH_BCC_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "bcc" );
 	private final QName NEWS_FLASH_SUBJECT_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "subject" );
 	private final QName NEWS_FLASH_ATTACHMENT_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "attachment" );
+	private final QName NEWS_FLASH_DATE_QNAME = QName.createQName( NEWS_FLASH_NAMESPACE_URI , "date" );
 
 	@Override
 	public void execute( DelegateExecution execution ) throws Exception {
@@ -208,6 +209,7 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 	private void markNodeAsSent( DelegateExecution execution , NodeRef nodeRef , String authenticatedUserName , List<String> to , List<String> cc , List<String> bcc , String subject ){
 		NodeService nodeService = getNodeService();
 		try {
+			Date date = new Date();
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put( WorkflowModel.PROP_WORKFLOW_INSTANCE_ID , null );
 			properties.put( WorkflowModel.PROP_WORKFLOW_DESCRIPTION , null );
@@ -215,8 +217,10 @@ public class NewsFlashSend extends BaseJavaDelegate implements Serializable{
 			properties.put( ContentModel.PROP_ORIGINATOR , authenticatedUserName );
 			properties.put( ContentModel.PROP_ADDRESSEE , String.format( "%s,%s,%s" , ( ( to != null ) ? String.join( "," , to ) : "" ) ,  ( ( cc != null ) ? String.join( "," , cc ) : "" ) ,  ( ( bcc != null ) ? String.join( "," , bcc ) : "" ) ) );
 			properties.put( ContentModel.PROP_SUBJECT , subject );
-			properties.put( ContentModel.PROP_SENTDATE , new Date() );
+			properties.put( ContentModel.PROP_SENTDATE , date );
 			nodeService.addAspect( nodeRef , ContentModel.ASPECT_EMAILED, properties );
+
+			nodeService.setProperty( nodeRef , NEWS_FLASH_DATE_QNAME , date );
 		} catch ( Exception e ) {
 			String errorMessage = "Error occured whilst marking news-flash as sent. " + e.getMessage();
 			logger.error( errorMessage );

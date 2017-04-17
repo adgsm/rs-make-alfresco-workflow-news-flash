@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>Cancel news flash workflow</shortname>
+	<description>Cancel news flash workflow (if initiated)</description>
+	<url>/rs/make/news-flash/cancel</url>
+	<url>/rs/make/news-flash/cancel.json</url>
+	<format default='json'>extension</format>
+	<authentication runas='admin'>user</authentication>
+	<transaction>required</transaction>
+</webscript>
